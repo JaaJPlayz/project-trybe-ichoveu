@@ -27,6 +27,8 @@ export const getWeatherByCity = async (cityURL) => {
       temp: resolveData.current.temp_c,
       condition: resolveData.current.condition.text,
       icon: resolveData.current.condition.icon,
+      name: resolveData.location.name,
+      country: resolveData.location.country,
     };
   } catch (error) {
     console.log(error.message);
