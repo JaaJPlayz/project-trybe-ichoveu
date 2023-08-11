@@ -107,7 +107,7 @@ export function createCityElement(cityInfo) {
   cityElement.appendChild(infoContainer);
 
   const sevenDaysButton = createElement('button', 'seven-days-button', 'Ver previsão');
-  infoContainer.appendChild(sevenDaysButton);
+  cityElement.appendChild(sevenDaysButton);
 
   sevenDaysButton.addEventListener('click', async () => {
     const request = await fetch(`http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${import.meta.env.VITE_TOKEN}&q=${url}&days=7`);
