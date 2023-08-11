@@ -79,7 +79,7 @@ export function showForecast(forecastList) {
  * Recebe um objeto com as informações de uma cidade e retorna um elemento HTML
  */
 export function createCityElement(cityInfo) {
-  const { name, country, temp, condition, icon /* , url */ } = cityInfo;
+  const { name, country, temp, condition, icon, url } = cityInfo;
 
   const cityElement = createElement('li', 'city');
 
@@ -105,6 +105,26 @@ export function createCityElement(cityInfo) {
 
   cityElement.appendChild(headingElement);
   cityElement.appendChild(infoContainer);
+
+  const sevenDaysButton = createElement('button', 'seven-days-button', 'Ver previsão');
+  infoContainer.appendChild(sevenDaysButton);
+
+  sevenDaysButton.addEventListener('click', async () => {
+    const request = await fetch(`http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${import.meta.env.VITE_TOKEN}&q=${url}&days=7`);
+    const data = await request.json();
+    const dayData = await data.forecast.forecastday;
+    let dataArray = [];
+    await dayData.forEach((day) => {
+      dataArray.push({
+        date: day.date,
+        maxTemp: day.day.maxtemp_c,
+        minTemp: day.day.mintemp_c,
+        condition: day.day.condition.text,
+        icon: day.day.condition.icon,
+      })
+      showForecast(dataArray);
+    })
+  })
 
   return cityElement;
 }
