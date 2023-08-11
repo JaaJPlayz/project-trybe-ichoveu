@@ -113,7 +113,7 @@ export function createCityElement(cityInfo) {
     const request = await fetch(`http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${import.meta.env.VITE_TOKEN}&q=${url}&days=7`);
     const data = await request.json();
     const dayData = await data.forecast.forecastday;
-    let dataArray = [];
+    const dataArray = [];
     await dayData.forEach((day) => {
       dataArray.push({
         date: day.date,
@@ -121,10 +121,10 @@ export function createCityElement(cityInfo) {
         minTemp: day.day.mintemp_c,
         condition: day.day.condition.text,
         icon: day.day.condition.icon,
-      })
+      });
       showForecast(dataArray);
-    })
-  })
+    });
+  });
 
   return cityElement;
 }
