@@ -1,13 +1,14 @@
-import { getWeatherByCity, searchCities } from './weatherAPI';
+import { getWeatherByCity, searchCities } from "./weatherAPI";
 
-const ul = document.getElementById('cities');
+const ul = document.getElementById("cities");
 
 /**
  * Cria um elemento HTML com as informações passadas
+ *
  */
-function createElement(tagName, className, textContent = '') {
+function createElement(tagName, className, textContent = "") {
   const element = document.createElement(tagName);
-  element.classList.add(...className.split(' '));
+  element.classList.add(...className.split(" "));
   element.textContent = textContent;
   return element;
 }
@@ -20,26 +21,34 @@ function createForecast(forecast) {
 
   const weekday = new Date(date);
   weekday.setDate(weekday.getDate() + 1);
-  const weekdayName = weekday.toLocaleDateString('pt-BR', { weekday: 'short' });
+  const weekdayName = weekday.toLocaleDateString("pt-BR", { weekday: "short" });
 
-  const forecastElement = createElement('div', 'forecast');
-  const dateElement = createElement('p', 'forecast-weekday', weekdayName);
+  const forecastElement = createElement("div", "forecast");
+  const dateElement = createElement("p", "forecast-weekday", weekdayName);
 
-  const maxElement = createElement('span', 'forecast-temp max', 'max');
-  const maxTempElement = createElement('span', 'forecast-temp max', `${maxTemp}º`);
-  const minElement = createElement('span', 'forecast-temp min', 'min');
-  const minTempElement = createElement('span', 'forecast-temp min', `${minTemp}º`);
-  const tempContainer = createElement('div', 'forecast-temp-container');
+  const maxElement = createElement("span", "forecast-temp max", "max");
+  const maxTempElement = createElement(
+    "span",
+    "forecast-temp max",
+    `${maxTemp}º`
+  );
+  const minElement = createElement("span", "forecast-temp min", "min");
+  const minTempElement = createElement(
+    "span",
+    "forecast-temp min",
+    `${minTemp}º`
+  );
+  const tempContainer = createElement("div", "forecast-temp-container");
   tempContainer.appendChild(maxElement);
   tempContainer.appendChild(minElement);
   tempContainer.appendChild(maxTempElement);
   tempContainer.appendChild(minTempElement);
 
-  const conditionElement = createElement('p', 'forecast-condition', condition);
-  const iconElement = createElement('img', 'forecast-icon');
-  iconElement.src = icon.replace('64x64', '128x128');
+  const conditionElement = createElement("p", "forecast-condition", condition);
+  const iconElement = createElement("img", "forecast-icon");
+  iconElement.src = icon.replace("64x64", "128x128");
 
-  const middleContainer = createElement('div', 'forecast-middle-container');
+  const middleContainer = createElement("div", "forecast-middle-container");
   middleContainer.appendChild(tempContainer);
   middleContainer.appendChild(iconElement);
 
@@ -64,15 +73,15 @@ function clearChildrenById(elementId) {
  * Recebe uma lista de previsões e as exibe na tela dentro de um modal
  */
 export function showForecast(forecastList) {
-  const forecastContainer = document.getElementById('forecast-container');
-  const weekdayContainer = document.getElementById('weekdays');
-  clearChildrenById('weekdays');
+  const forecastContainer = document.getElementById("forecast-container");
+  const weekdayContainer = document.getElementById("weekdays");
+  clearChildrenById("weekdays");
   forecastList.forEach((forecast) => {
     const weekdayElement = createForecast(forecast);
     weekdayContainer.appendChild(weekdayElement);
   });
 
-  forecastContainer.classList.remove('hidden');
+  forecastContainer.classList.remove("hidden");
 }
 
 /**
@@ -81,36 +90,44 @@ export function showForecast(forecastList) {
 export function createCityElement(cityInfo) {
   const { name, country, temp, condition, icon, url } = cityInfo;
 
-  const cityElement = createElement('li', 'city');
+  const cityElement = createElement("li", "city");
 
-  const headingElement = createElement('div', 'city-heading');
-  const nameElement = createElement('h2', 'city-name', name);
-  const countryElement = createElement('p', 'city-country', country);
+  const headingElement = createElement("div", "city-heading");
+  const nameElement = createElement("h2", "city-name", name);
+  const countryElement = createElement("p", "city-country", country);
   headingElement.appendChild(nameElement);
   headingElement.appendChild(countryElement);
 
-  const tempElement = createElement('p', 'city-temp', `${temp}º`);
-  const conditionElement = createElement('p', 'city-condition', condition);
+  const tempElement = createElement("p", "city-temp", `${temp}º`);
+  const conditionElement = createElement("p", "city-condition", condition);
 
-  const tempContainer = createElement('div', 'city-temp-container');
+  const tempContainer = createElement("div", "city-temp-container");
   tempContainer.appendChild(conditionElement);
   tempContainer.appendChild(tempElement);
 
-  const iconElement = createElement('img', 'condition-icon');
-  iconElement.src = icon.replace('64x64', '128x128');
+  const iconElement = createElement("img", "condition-icon");
+  iconElement.src = icon.replace("64x64", "128x128");
 
-  const infoContainer = createElement('div', 'city-info-container');
+  const infoContainer = createElement("div", "city-info-container");
   infoContainer.appendChild(tempContainer);
   infoContainer.appendChild(iconElement);
 
   cityElement.appendChild(headingElement);
   cityElement.appendChild(infoContainer);
 
-  const sevenDaysButton = createElement('button', 'seven-days-button', 'Ver previsão');
+  const sevenDaysButton = createElement(
+    "button",
+    "seven-days-button",
+    "Ver previsão"
+  );
   cityElement.appendChild(sevenDaysButton);
 
-  sevenDaysButton.addEventListener('click', async () => {
-    const request = await fetch(`http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${import.meta.env.VITE_TOKEN}&q=${url}&days=7`);
+  sevenDaysButton.addEventListener("click", async () => {
+    const request = await fetch(
+      `http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${
+        import.meta.env.VITE_TOKEN
+      }&q=${url}&days=7`
+    );
     const data = await request.json();
     const dayData = await data.forecast.forecastday;
     const dataArray = [];
@@ -134,14 +151,16 @@ export function createCityElement(cityInfo) {
  */
 export async function handleSearch(event) {
   event.preventDefault();
-  clearChildrenById('cities');
+  clearChildrenById("cities");
 
-  const searchInput = document.getElementById('search-input');
+  const searchInput = document.getElementById("search-input");
   const searchValue = searchInput.value;
   const cities = await searchCities(searchValue);
 
   try {
-    const request = await Promise.all(cities.map((item) => getWeatherByCity(item.url)));
+    const request = await Promise.all(
+      cities.map((item) => getWeatherByCity(item.url))
+    );
     request.forEach((item2) => {
       const li = createCityElement(item2);
       ul.appendChild(li);
